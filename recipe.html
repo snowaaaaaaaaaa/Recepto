@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Детальний рецепт з інгредієнтами та покроковим приготуванням" />
+  <title>Recepto</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍳</text></svg>" />
+
+  <style>
+    /* свої стилі для сторінки рецептів */
+
+    /* метаблко над заголовком */
+    .recipe-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    /* блок зірок на сторінці рецепту */
+    .detail-stars .star { font-size: 1.1rem; }
+
+    /* розмітка рецепту в 2 колонки */
+    .recipe-columns {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 40px;
+      margin-top: 40px;
+    }
+
+    @media (max-width: 768px) {
+      .recipe-columns {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+    }
+
+    /* закріпив блок інгредієнтів */
+    .ingredients-sticky {
+      position: sticky;
+      top: 160px;
+      align-self: flex-start;
+    }
+
+    @media (max-width: 768px) {
+      .ingredients-sticky { position: static; }
+    }
+
+    /* заголовок секції */
+    .section-box {
+      background: var(--white);
+      border-radius: var(--r-lg);
+      border: 1px solid var(--cream-border);
+      padding: 28px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* к-сть порцій */
+    .servings-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--cream-border);
+    }
+
+    .servings-label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .servings-count {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--terracotta);
+    }
+
+    /* кнопка назад */
+    .back-row {
+      margin-bottom: 28px;
+    }
+
+    /* схожі рецепти */
+    .related-section {
+      padding: 60px 0;
+      border-top: 2px solid var(--cream-border);
+      margin-top: 60px;
+    }
+
+    .related-section h2 {
+      text-align: center;
+      margin-bottom: 32px;
+      font-size: 1.8rem;
+    }
+
+    .related-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 24px;
+    }
+
+    /* плашка 404, сподіваюсь не знадобиться) */
+    .not-found-wrap {
+      text-align: center;
+      padding: 100px 20px;
+    }
+
+    .not-found-wrap .empty-icon { font-size: 5rem; margin-bottom: 20px; }
+    .not-found-wrap h2 { margin-bottom: 12px; }
+    .not-found-wrap p  { margin-bottom: 28px; }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .breadcrumb a {
+      color: var(--terracotta);
+      font-weight: 600;
+      transition: var(--trans-fast);
+    }
+
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--cream-border); }
+
+    /* друк рецепту, беру всю сторінку, шоб було коректне відображення */
+    .btn-print {
+      background: none;
+      border: 2px solid var(--cream-border);
+      color: var(--text-muted);
+      border-radius: var(--r-full);
+      padding: 8px 16px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--trans-fast);
+    }
+
+    .btn-print:hover {
+      border-color: var(--sage);
+      color: var(--sage);
+    }
+
+    /* лінія прогресу кроків */
+    .steps-progress {
+      width: 100%;
+      height: 4px;
+      background: var(--cream-border);
+      border-radius: 2px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+
+    .steps-progress-bar {
+      height: 100%;
+      background: linear-gradient(to right, var(--terracotta), var(--peach));
+      border-radius: 2px;
+      transition: width 0.5s var(--ease);
+    }
+
+    /* прапор виконаного кроку */
+    .step-item.done {
+      border-color: var(--sage);
+      background: rgba(90,122,60,0.04);
+    }
+
+    .step-item.done .step-number {
+      background: linear-gradient(135deg, var(--sage), var(--sage-light));
+    }
+
+    .step-item.done .step-text {
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+<!-- ========================
+     хедер
+     ======================== -->
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo" aria-label="На головну">
+      <div class="logo-icon">🍳</div>
+      <div class="logo-text">
+        <span class="logo-name">Смачно</span>
+        <span class="logo-sub">Збірник рецептів</span>
+      </div>
+    </a>
+    <nav class="site-nav" id="siteNav" aria-label="Головне меню">
+      <a href="index.html" class="nav-link">🏠 Рецепти</a>
+      <a href="admin.html" class="nav-link btn-admin">⚙️ Адмін</a>
+    </nav>
+    <button class="burger" id="burgerBtn" aria-label="Відкрити меню" aria-expanded="false">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</header>
+
+<!-- ========================
+     блок з основним контентом
+     ======================== -->
+<main>
+  <div class="recipe-detail-page" id="recipeDetailPage">
+    <!-- вміст рендериться жава скріптом -->
+    <div class="empty-state">
+      <div class="empty-icon">⏳</div>
+      <h3>Завантаження рецепту...</h3>
+    </div>
+  </div>
+</main>
+
+<!-- ========================
+     футер
+     ======================== -->
+<footer class="site-footer">
+  <div class="footer-logo">🍳 Recepto</div>
+  <p class="footer-tagline">Кожне блюдо — це маленька подія</p>
+  <div class="footer-divider"></div>
+  <nav class="footer-nav" aria-label="Навігація у футері">
+    <a href="index.html">Рецепти</a>
+    <a href="admin.html">Адмін</a>
+  </nav>
+  <p class="footer-copy">© 2026 Dvorovenko. Готуйте з любов'ю! ❤️</p>
+</footer>
+
+<!-- ========================
+     підключаємо жаву
+     ======================== -->
+<script src="script.js"></script>
+<script>
+  // ====================================
+  //  блок логіки сторінки рецептів
+  // ====================================
+
+  /** поточна кількість виконаних кроків */
+  let completedSteps = 0;
+  let totalSteps = 0;
+
+  /**
+   * рендеринг деталей рецепту
+   * він завантажує рецепт по айдішке з юрл параметра та відображає всі дані
+   */
+  function renderRecipeDetail() {
+    const id = getUrlParam('id');
+    const container = document.getElementById('recipeDetailPage');
+
+    // перекидає
+    if (!id) {
+      renderNotFound(container);
+      return;
+    }
+
+    const recipe = getRecipeById(id);
+
+    // перекидаємо на 404 якшо не вказана айдішка
+    if (!recipe) {
+      renderNotFound(container);
+      return;
+    }
+
+    // оновлення тайтл сторінки
+    document.title = `${recipe.title} — Збірник рецептів`;
+
+    totalSteps = recipe.steps.length;
+    completedSteps = 0;
+
+    // генерація хтмл інгредієнтів
+    const ingredientsHtml = recipe.ingredients.map(ing => {
+      if (ing.startsWith('---')) {
+        // підзаголовок у переліку
+        return `<div style="font-weight:700; color:var(--brown-mid); font-size:0.85rem; text-transform:uppercase; letter-spacing:0.05em; margin-top:12px; padding-top:12px; border-top:1px solid var(--cream-border)">${ing.replace(/---/g,'').trim()}</div>`;
+      }
+      return `
+        <li class="ingredient-item">
+          <span class="ingredient-dot"></span>
+          <span>${escapeHtml(ing)}</span>
+        </li>
+      `;
+    }).join('');
+
+    // генерація хтмл кроків
+    const stepsHtml = recipe.steps.map((step, i) => `
+      <li class="step-item" 
+          id="step-${i}"
+          onclick="toggleStep(${i})"
+          style="cursor:pointer"
+          title="Натисніть, щоб відмітити виконаним"
+          role="checkbox"
+          aria-checked="false"
+          tabindex="0"
+          onkeydown="if(event.key==='Enter'||event.key===' ') toggleStep(${i})">
+        <div class="step-number">${i + 1}</div>
+        <p class="step-text">${escapeHtml(step)}</p>
+      </li>
+    `).join('');
+
+    // зв'язані рецепти (та ж категорія, без поточного)
+    const relatedRecipes = getRecipes()
+      .filter(r => r.id !== id && r.category === recipe.category)
+      .slice(0, 3);
+
+    const relatedHtml = relatedRecipes.length > 0
+      ? `
+        <section class="related-section">
+          <div class="container">
+            <h2>Схожі рецепти</h2>
+            <div class="related-grid">
+              ${relatedRecipes.map(r => renderRecipeCard(r)).join('')}
+            </div>
+          </div>
+        </section>
+      `
+      : '';
+
+    // складність текстовий опис
+    const difficultyLabels = ['', 'Дуже просто', 'Легко', 'Середньо', 'Складно', 'Майстер'];
+
+    // рендер усього вмісту
+    container.innerHTML = `
+      <!-- Хлібні крихти -->
+      <nav class="breadcrumb" aria-label="Навігація за крихтами хліба">
+        <a href="index.html">🏠 Рецепти</a>
+        <span class="breadcrumb-sep">›</span>
+        <a href="index.html?category=${encodeURIComponent(recipe.category)}">${escapeHtml(recipe.category)}</a>
+        <span class="breadcrumb-sep">›</span>
+        <span>${escapeHtml(recipe.title)}</span>
+      </nav>
+
+      <!-- Кнопки навігації -->
+      <div class="back-row" style="display:flex; gap:12px; align-items:center; flex-wrap:wrap">
+        <button class="btn-back" onclick="history.back()" aria-label="Повернутися назад">
+          ← Назад
+        </button>
+        <button class="btn-print" onclick="window.print()" aria-label="Надрукувати рецепт">
+          🖨️ Друк
+        </button>
+      </div>
+
+      <!-- Велике фото -->
+      <img
+        class="recipe-hero-image animate-fade-in"
+        src="${escapeHtml(recipe.image)}"
+        alt="${escapeHtml(recipe.title)}"
+        onerror="this.src='https://images.unsplash.com/photo-1495521821757-a1efb6729352?w=900&fit=crop'"
+      />
+
+      <!-- Мета-дані рецепту -->
+      <div class="recipe-detail-meta">
+        <div class="meta-badge category">
+          🗂️ ${escapeHtml(recipe.category)}
+        </div>
+        <div class="meta-badge time">
+          ⏱ ${formatTime(recipe.time)}
+        </div>
+        <div class="meta-badge" style="gap:6px">
+          <span style="font-size:0.8rem; color:var(--text-muted)">Складність:</span>
+          <span class="detail-stars">${renderStars(recipe.difficulty)}</span>
+          <span style="font-size:0.85rem; color:var(--gold); font-weight:700">${difficultyLabels[recipe.difficulty]}</span>
+        </div>
+      </div>
+
+      <!-- Заголовок та опис -->
+      <h1 class="recipe-detail-title animate-fade-up">${escapeHtml(recipe.title)}</h1>
+      <p class="recipe-detail-desc">${escapeHtml(recipe.description)}</p>
+
+      <!-- Основний контент: інгредієнти + кроки -->
+      <div class="recipe-columns">
+
+        <!-- ЛІВА КОЛОНКА: Інгредієнти (прикріплена) -->
+        <div class="ingredients-sticky">
+          <div class="section-box">
+            <h2 class="recipe-section-title">🛒 Інгредієнти</h2>
+            <div class="servings-row">
+              <span class="servings-label">Порцій:</span>
+              <span class="servings-count">4 особи</span>
+            </div>
+            <ul class="ingredients-list">
+              ${ingredientsHtml}
+            </ul>
+          </div>
+        </div>
+
+        <!-- ПРАВА КОЛОНКА: Кроки приготування -->
+        <div>
+          <div class="section-box">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px">
+              <h2 class="recipe-section-title mb-0">👨‍🍳 Приготування</h2>
+              <span id="progressText" style="font-size:0.85rem; color:var(--text-muted); font-weight:700; white-space:nowrap">
+                0 / ${totalSteps} кроків
+              </span>
+            </div>
+
+            <!-- Прогрес виконання -->
+            <div class="steps-progress" aria-hidden="true">
+              <div class="steps-progress-bar" id="progressBar" style="width:0%"></div>
+            </div>
+
+            <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:20px">
+              💡 Натисніть на крок, щоб відмітити виконаним
+            </p>
+
+            <ol class="steps-list">
+              ${stepsHtml}
+            </ol>
+          </div>
+        </div>
+
+      </div>
+    `;
+
+    // тут вставляю схожі рецепти після контейнера
+    if (relatedHtml) {
+      container.insertAdjacentHTML('afterend', relatedHtml);
+    }
+  }
+
+  /**
+   * відображення сторінки 404 (рецепт не знайдено)
+   * @param {HTMLElement} container контейнер для рендеру
+   */
+  function renderNotFound(container) {
+    document.title = 'Рецепт не знайдено — Збірник рецептів';
+    container.innerHTML = `
+      <div class="not-found-wrap animate-fade-in">
+        <div class="empty-icon">🍽️</div>
+        <h2>Рецепт не знайдено</h2>
+        <p>Схоже, такого рецепту не існує або він був видалений.</p>
+        <a href="index.html" class="btn btn-primary">← Повернутись до рецептів</a>
+      </div>
+    `;
+  }
+
+  function toggleStep(index) {
+    const stepEl = document.getElementById(`step-${index}`);
+    if (!stepEl) return;
+
+    const isDone = stepEl.classList.toggle('done');
+    stepEl.setAttribute('aria-checked', isDone.toString());
+
+    // оновлюємо лічильник виконаних кроків
+    completedSteps = document.querySelectorAll('.step-item.done').length;
+    updateProgress();
+  }
+
+  /**
+   * оновлюємо прогрес бар та лічильник кроків
+   */
+  function updateProgress() {
+    const bar = document.getElementById('progressBar');
+    const text = document.getElementById('progressText');
+    if (!bar || !text) return;
+
+    const percent = totalSteps > 0 ? (completedSteps / totalSteps) * 100 : 0;
+    bar.style.width = percent + '%';
+    text.textContent = `${completedSteps} / ${totalSteps} кроків`;
+
+    // якшо все гуд заповнили, то виводимо позитивне повідомлення
+    if (completedSteps === totalSteps && totalSteps > 0) {
+      showToast('🎉 Вітаємо! Рецепт виконано! Смачного!', 'success', 4000);
+    }
+  }
+
+  // ====================================
+  //  ініціалізація
+  // ====================================
+  document.addEventListener('DOMContentLoaded', () => {
+    renderRecipeDetail();
+  });
+</script>
+
+</body>
+</html>

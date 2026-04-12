@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Адміністративна панель збірника рецептів" />
+  <title>Admin</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚙️</text></svg>" />
+
+  <style>
+    /* стилі для адмінки */
+
+    /* статіка картки */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 20px;
+      margin-bottom: 36px;
+    }
+
+    .stat-card {
+      background: var(--white);
+      border: 1px solid var(--cream-border);
+      border-radius: var(--r-lg);
+      padding: 22px 24px;
+      box-shadow: var(--shadow-xs);
+      transition: var(--trans);
+    }
+
+    .stat-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    .stat-icon { font-size: 2rem; margin-bottom: 8px; }
+
+    .stat-value {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--terracotta);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    /* табліця рецептів */
+    .table-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--cream-border);
+      flex-wrap: wrap;
+    }
+
+    .table-title {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--brown-dark);
+      margin-right: auto;
+    }
+
+    .table-search {
+      padding: 8px 14px 8px 14px;
+      border: 2px solid var(--cream-border);
+      border-radius: var(--r-full);
+      background: var(--cream);
+      font-size: 0.88rem;
+      color: var(--brown-dark);
+      transition: var(--trans);
+      width: 220px;
+    }
+
+    .table-search:focus {
+      border-color: var(--terracotta);
+      background: var(--white);
+    }
+
+    /* попередження перед видаленням))) */
+    .confirm-dialog {
+      position: fixed;
+      inset: 0;
+      background: var(--overlay);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--trans);
+    }
+
+    .confirm-dialog.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .confirm-box {
+      background: var(--white);
+      border-radius: var(--r-xl);
+      padding: 36px 32px;
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+      box-shadow: var(--shadow-xl);
+      transform: scale(0.95);
+      transition: var(--trans);
+    }
+
+    .confirm-dialog.open .confirm-box {
+      transform: scale(1);
+    }
+
+    .confirm-icon { font-size: 3rem; margin-bottom: 16px; }
+
+    .confirm-box h3 { margin-bottom: 10px; }
+
+    .confirm-box p {
+      margin-bottom: 24px;
+      font-size: 0.95rem;
+    }
+
+    .confirm-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    /* попередній перегляд зображення () */
+    .image-preview-wrap {
+      margin-top: 10px;
+    }
+
+    .image-preview {
+      width: 100%;
+      max-width: 320px;
+      height: 180px;
+      object-fit: cover;
+      border-radius: var(--r-md);
+      border: 2px solid var(--cream-border);
+      display: none;
+    }
+
+    .image-preview.loaded { display: block; }
+
+    /* бейдж категорії в таблиці */
+    .category-badge {
+      background: rgba(200,85,42,0.1);
+      color: var(--terracotta);
+      border-radius: var(--r-full);
+      padding: 3px 10px;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    /* лог виходу */
+    .logout-btn {
+      padding: 8px 16px;
+      border-radius: var(--r-full);
+      background: rgba(231,76,60,0.1);
+      color: #e74c3c;
+      border: 2px solid rgba(231,76,60,0.3);
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--trans-fast);
+    }
+
+    .logout-btn:hover {
+      background: #e74c3c;
+      color: white;
+      border-color: #e74c3c;
+    }
+
+    /* порожня таблиця */
+    .table-empty {
+      padding: 60px 20px;
+      text-align: center;
+    }
+
+    /* форма: секції */
+    .form-section-title {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--brown-dark);
+      margin: 24px 0 14px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--cream-border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* число кроків/інгредієнтів */
+    .list-count {
+      font-size: 0.75rem;
+      background: var(--cream-dark);
+      color: var(--text-muted);
+      border-radius: var(--r-full);
+      padding: 2px 8px;
+      font-weight: 700;
+      font-family: var(--font-body);
+    }
+  </style>
+</head>
+<body class="admin-page">
+
+<!-- ========================
+     хедер
+     ======================== -->
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo" aria-label="На головну">
+      <div class="logo-icon">🍳</div>
+      <div class="logo-text">
+        <span class="logo-name">Смачно</span>
+        <span class="logo-sub">Збірник рецептів</span>
+      </div>
+    </a>
+    <nav class="site-nav" id="siteNav" aria-label="Головне меню">
+      <a href="index.html" class="nav-link">🏠 Рецепти</a>
+      <a href="admin.html" class="nav-link btn-admin active">⚙️ Адмін</a>
+    </nav>
+    <button class="burger" id="burgerBtn" aria-label="Відкрити меню" aria-expanded="false">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</header>
+
+<!-- ========================
+     форма входу, але додав пам'ять користувача, тому не треба буде кожного разу заходити
+     ======================== -->
+<div id="loginSection">
+  <div class="admin-login-wrap">
+    <div class="admin-login-card animate-fade-up">
+      <div class="admin-login-icon">🔐</div>
+      <h2>Вхід в адмін-панель</h2>
+      <p>Введіть пароль для доступу до управління рецептами</p>
+
+      <div class="form-group">
+        <label for="passwordInput" class="form-label">Пароль</label>
+        <input
+          type="password"
+          id="passwordInput"
+          class="form-input"
+          placeholder="Введіть пароль..."
+          autocomplete="current-password"
+        />
+        <div id="loginError" class="form-error hidden">
+          ❌ Невірний пароль. Спробуйте ще раз.
+        </div>
+      </div>
+
+      <button class="btn btn-primary w-full" id="loginBtn" onclick="handleLogin()">
+        🔓 Увійти
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ========================
+     дашборд для адмінки
+     ======================== -->
+<div id="adminSection" class="hidden">
+  <section class="admin-dashboard">
+    <div class="container">
+
+      <!-- заголовок адмін панелі -->
+      <div class="admin-header-bar">
+        <div>
+          <h2>⚙️ Адмін-панель</h2>
+          <p style="font-size:0.9rem; margin-top:4px">Управління рецептами збірника</p>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap">
+          <a href="index.html" class="btn btn-secondary btn-sm">🏠 На сайт</a>
+          <button class="btn btn-primary btn-sm" onclick="openModal()">
+            ➕ Додати рецепт
+          </button>
+          <button class="logout-btn" onclick="handleLogout()">🚪 Вийти</button>
+        </div>
+      </div>
+
+      <!-- статка -->
+      <div class="stats-grid" id="statsGrid">
+        <!-- рендер через жаву -->
+      </div>
+
+      <!-- таблиця рецептів -->
+      <div class="admin-table-wrap">
+        <div class="table-toolbar">
+          <span class="table-title">📋 Список рецептів</span>
+          <input
+            type="search"
+            id="adminSearchInput"
+            class="table-search"
+            placeholder="🔍 Пошук..."
+            oninput="renderAdminTable()"
+            aria-label="Пошук в таблиці"
+          />
+          <button class="btn btn-primary btn-sm" onclick="openModal()">
+            ➕ Додати
+          </button>
+        </div>
+
+        <div style="overflow-x: auto">
+          <table class="admin-table" id="adminTable" role="table">
+            <thead>
+              <tr>
+                <th>Фото</th>
+                <th>Назва</th>
+                <th>Категорія</th>
+                <th>Складність</th>
+                <th>Час</th>
+                <th>Дії</th>
+              </tr>
+            </thead>
+            <tbody id="adminTableBody">
+              <!-- рядки також почав рендерети через жаву -->
+            </tbody>
+          </table>
+          <div id="tableEmpty" class="table-empty hidden">
+            <div class="empty-icon">📋</div>
+            <h3>Рецептів не знайдено</h3>
+            <p>Спробуйте змінити пошуковий запит</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</div>
+
+<!-- ========================
+     модальне вікно шоб додати або редагувати рецепт
+     ======================== -->
+<div class="modal-overlay" id="recipeModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal">
+
+    <div class="modal-header">
+      <h3 id="modalTitle">➕ Новий рецепт</h3>
+      <button class="modal-close" onclick="closeModal()" aria-label="Закрити">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <form id="recipeForm" novalidate onsubmit="return false">
+
+        <!-- основна інфа -->
+        <div class="form-section-title">📝 Основна інформація</div>
+
+        <div class="form-group">
+          <label for="fTitle" class="form-label">Назва рецепту *</label>
+          <input type="text" id="fTitle" class="form-input" placeholder="Наприклад: Борщ з пампушками" maxlength="100" required />
+          <div class="form-error hidden" id="errTitle">❌ Введіть назву рецепту</div>
+        </div>
+
+        <div class="form-group">
+          <label for="fDescription" class="form-label">Короткий опис *</label>
+          <textarea id="fDescription" class="form-textarea" placeholder="Опишіть рецепт у кількох реченнях..." rows="3" maxlength="500" required></textarea>
+          <div class="form-error hidden" id="errDescription">❌ Введіть опис рецепту</div>
+        </div>
+
+        <!-- фотки -->
+        <div class="form-section-title">📷 Фото</div>
+
+        <div class="form-group">
+          <label for="fImage" class="form-label">URL зображення</label>
+          <input type="url" id="fImage" class="form-input" placeholder="https://example.com/photo.jpg" />
+          <div class="form-error hidden" id="errImage">❌ Введіть коректний URL зображення</div>
+          <div class="image-preview-wrap">
+            <img id="imagePreview" class="image-preview" alt="Попередній перегляд" />
+          </div>
+        </div>
+
+        <!-- параметри -->
+        <div class="form-section-title">⚙️ Параметри</div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fCategory" class="form-label">Категорія *</label>
+            <select id="fCategory" class="form-input" required>
+              <option value="">— Оберіть категорію —</option>
+              <option value="Сніданки">🌅 Сніданки</option>
+              <option value="Обіди">☀️ Обіди</option>
+              <option value="Вечері">🌙 Вечері</option>
+              <option value="Десерти">🍰 Десерти</option>
+              <option value="Салати">🥗 Салати</option>
+              <option value="Супи">🍲 Супи</option>
+              <option value="Закуски">🥨 Закуски</option>
+              <option value="Напої">🥤 Напої</option>
+            </select>
+            <div class="form-error hidden" id="errCategory">❌ Оберіть категорію</div>
+          </div>
+
+          <div class="form-group">
+            <label for="fTime" class="form-label">Час приготування (хвилини) *</label>
+            <input type="number" id="fTime" class="form-input" placeholder="30" min="1" max="1440" required />
+            <div class="form-error hidden" id="errTime">❌ Введіть коректний час</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Складність *</label>
+          <div class="stars-input" id="starsInput" role="group" aria-label="Оберіть складність від 1 до 5">
+            <button type="button" class="star-btn" data-value="1" onclick="setDifficulty(1)" aria-label="Складність 1 — Дуже просто">★</button>
+            <button type="button" class="star-btn" data-value="2" onclick="setDifficulty(2)" aria-label="Складність 2 — Легко">★</button>
+            <button type="button" class="star-btn" data-value="3" onclick="setDifficulty(3)" aria-label="Складність 3 — Середньо">★</button>
+            <button type="button" class="star-btn" data-value="4" onclick="setDifficulty(4)" aria-label="Складність 4 — Складно">★</button>
+            <button type="button" class="star-btn" data-value="5" onclick="setDifficulty(5)" aria-label="Складність 5 — Майстер">★</button>
+          </div>
+          <span id="difficultyLabel" style="font-size:0.85rem; color:var(--text-muted); margin-top:6px; display:block"></span>
+          <div class="form-error hidden" id="errDifficulty">❌ Оберіть складність</div>
+        </div>
+
+        <!-- інгредієнти -->
+        <div class="form-section-title">
+          🛒 Інгредієнти
+          <span class="list-count" id="ingCount">0</span>
+        </div>
+
+        <div class="form-group">
+          <div id="ingredientsList" class="dynamic-list">
+            <!-- поля додаються динамічно -->
+          </div>
+          <button type="button" class="btn-add-item" onclick="addIngredientField()">
+            ➕ Додати інгредієнт
+          </button>
+        </div>
+
+        <!-- кроки -->
+        <div class="form-section-title">
+          👨‍🍳 Кроки приготування
+          <span class="list-count" id="stepsCount">0</span>
+        </div>
+
+        <div class="form-group">
+          <div id="stepsList" class="dynamic-list">
+            <!-- поля додаються динамічно -->
+          </div>
+          <button type="button" class="btn-add-item" onclick="addStepField()">
+            ➕ Додати крок
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Скасувати</button>
+      <button class="btn btn-primary" id="saveRecipeBtn" onclick="saveRecipe()">
+        💾 Зберегти рецепт
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ========================
+     повідомлення про видалення рецепта)
+     ======================== -->
+<div class="confirm-dialog" id="confirmDialog" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+  <div class="confirm-box">
+    <div class="confirm-icon">⚠️</div>
+    <h3 id="confirmTitle">Видалити рецепт?</h3>
+    <p id="confirmText">Ця дія незворотна. Рецепт буде видалено назавжди.</p>
+    <div class="confirm-actions">
+      <button class="btn btn-secondary" onclick="closeConfirm()">Скасувати</button>
+      <button class="btn btn-danger" id="confirmDeleteBtn" onclick="confirmDelete()">🗑️ Видалити</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========================
+     підключаю жаву
+     ======================== -->
+<script src="script.js"></script>
+<script>
+  // ====================================
+  //  тут будуть коментарі з приводу стану адмінки
+  // ====================================
+
+  /** айдішка рецепта, що редагується, також порожній нулл якшо додаємо новий  */
+  let editingId = null;
+
+  /** поточна складність у формі */
+  let currentDifficulty = 0;
+
+  /** айдішка рецепта, шо очікує підтвердження видалення */
+  let pendingDeleteId = null;
+
+  /** текст підказки для рівнів складності */
+  const DIFFICULTY_LABELS = {
+    1: '★ Дуже просто — для початківців',
+    2: '★★ Легко — базові навички',
+    3: '★★★ Середньо — потрібна практика',
+    4: '★★★★ Складно — досвід необхідний',
+    5: '★★★★★ Майстер — для гурманів'
+  };
+
+  // ====================================
+  //  блок по авторизації
+  // ====================================
+
+  /** перевірка авторизації при завантаженні */
+  function checkAuth() {
+    const isLoggedIn = sessionStorage.getItem('admin_logged_in') === 'true';
+    if (isLoggedIn) {
+      showDashboard();
+    } else {
+      document.getElementById('loginSection').classList.remove('hidden');
+      document.getElementById('adminSection').classList.add('hidden');
+    }
+  }
+
+  /** обробка кнопочки входу */
+  function handleLogin() {
+    const password = document.getElementById('passwordInput').value;
+    const errorEl = document.getElementById('loginError');
+
+    if (password === ADMIN_PASSWORD) {
+      sessionStorage.setItem('admin_logged_in', 'true');
+      errorEl.classList.add('hidden');
+      showDashboard();
+      showToast('✅ Ласкаво просимо в адмін-панель!', 'success');
+    } else {
+      errorEl.classList.remove('hidden');
+      document.getElementById('passwordInput').focus();
+      document.getElementById('passwordInput').select();
+    }
+  }
+
+  /** показати дашборд тільки після входу */
+  function showDashboard() {
+    document.getElementById('loginSection').classList.add('hidden');
+    document.getElementById('adminSection').classList.remove('hidden');
+    renderStats();
+    renderAdminTable();
+  }
+
+  /** вихід з адмін-панелі */
+  function handleLogout() {
+    sessionStorage.removeItem('admin_logged_in');
+    document.getElementById('adminSection').classList.add('hidden');
+    document.getElementById('loginSection').classList.remove('hidden');
+    document.getElementById('passwordInput').value = '';
+    showToast('🚪 Ви вийшли з адмін-панелі', 'info');
+  }
+
+  // можна натиснути ентер для входу)
+  document.getElementById('passwordInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') handleLogin();
+  });
+
+  // ====================================
+  //  статка
+  // ====================================
+
+  /** рендер статичних карток */
+  function renderStats() {
+    const recipes = getRecipes();
+    const categories = [...new Set(recipes.map(r => r.category))];
+    const avgTime = recipes.length
+      ? Math.round(recipes.reduce((s, r) => s + r.time, 0) / recipes.length)
+      : 0;
+    const avgDiff = recipes.length
+      ? (recipes.reduce((s, r) => s + r.difficulty, 0) / recipes.length).toFixed(1)
+      : 0;
+
+    document.getElementById('statsGrid').innerHTML = `
+      <div class="stat-card animate-fade-up" style="animation-delay:0ms">
+        <div class="stat-icon">📚</div>
+        <div class="stat-value">${recipes.length}</div>
+        <div class="stat-label">Всього рецептів</div>
+      </div>
+      <div class="stat-card animate-fade-up" style="animation-delay:60ms">
+        <div class="stat-icon">🗂️</div>
+        <div class="stat-value">${categories.length}</div>
+        <div class="stat-label">Категорій</div>
+      </div>
+      <div class="stat-card animate-fade-up" style="animation-delay:120ms">
+        <div class="stat-icon">⏱</div>
+        <div class="stat-value">${avgTime}<small style="font-size:1rem">хв</small></div>
+        <div class="stat-label">Сер. час</div>
+      </div>
+      <div class="stat-card animate-fade-up" style="animation-delay:180ms">
+        <div class="stat-icon">⭐</div>
+        <div class="stat-value">${avgDiff}</div>
+        <div class="stat-label">Сер. складність</div>
+      </div>
+    `;
+  }
+
+  // ====================================
+  //  табла рецептів
+  // ====================================
+
+  /** рендер таблиці рецептів в адмін-панелі */
+  function renderAdminTable() {
+    const searchVal = (document.getElementById('adminSearchInput')?.value || '').toLowerCase();
+    let recipes = getRecipes();
+
+    // фільтрація по пошуку
+    if (searchVal) {
+      recipes = recipes.filter(r =>
+        r.title.toLowerCase().includes(searchVal) ||
+        r.category.toLowerCase().includes(searchVal)
+      );
+    }
+
+    const tbody = document.getElementById('adminTableBody');
+    const emptyEl = document.getElementById('tableEmpty');
+
+    if (recipes.length === 0) {
+      tbody.innerHTML = '';
+      emptyEl.classList.remove('hidden');
+      return;
+    }
+
+    emptyEl.classList.add('hidden');
+
+    tbody.innerHTML = recipes.map(recipe => `
+      <tr>
+        <td data-label="Фото">
+          <img
+            class="admin-thumb"
+            src="${escapeHtml(recipe.image || '')}"
+            alt="${escapeHtml(recipe.title)}"
+            onerror="this.src='https://images.unsplash.com/photo-1495521821757-a1efb6729352?w=100&fit=crop'"
+          />
+        </td>
+        <td data-label="Назва" style="font-weight:700; color:var(--brown-dark); max-width:200px">
+          ${escapeHtml(recipe.title)}
+        </td>
+        <td data-label="Категорія">
+          <span class="category-badge">${escapeHtml(recipe.category)}</span>
+        </td>
+        <td data-label="Складність">
+          ${renderStars(recipe.difficulty)}
+        </td>
+        <td data-label="Час">
+          <span style="color:var(--sage); font-weight:600">⏱ ${formatTime(recipe.time)}</span>
+        </td>
+        <td data-label="Дії">
+          <div class="admin-actions">
+            <a href="recipe.html?id=${recipe.id}" target="_blank" class="btn btn-sm" 
+               style="background:var(--cream-dark); color:var(--brown-mid); border:none"
+               title="Переглянути рецепт">
+              👁
+            </a>
+            <button class="btn btn-warning btn-sm" onclick="startEdit('${recipe.id}')" title="Редагувати">
+              ✏️
+            </button>
+            <button class="btn btn-danger btn-sm" onclick="startDelete('${recipe.id}', '${escapeHtml(recipe.title)}')" title="Видалити">
+              🗑️
+            </button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  // ====================================
+  //  модальне вікно (форма рецепту)
+  // ====================================
+
+  /** автоматом відкрити модальне вікно для додавання нового рецепту */
+  function openModal(id = null) {
+    editingId = id;
+    currentDifficulty = 0;
+
+    const modal = document.getElementById('recipeModal');
+    const title = document.getElementById('modalTitle');
+
+    if (id) {
+      // режим редагування
+      const recipe = getRecipeById(id);
+      if (!recipe) return;
+
+      title.textContent = '✏️ Редагувати рецепт';
+      populateForm(recipe);
+    } else {
+      // режим додавання
+      title.textContent = '➕ Новий рецепт';
+      resetForm();
+      // додати по одному початковому полю для зручності
+      addIngredientField();
+      addIngredientField();
+      addStepField();
+      addStepField();
+    }
+
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+
+    // фокус на першому полі
+    setTimeout(() => document.getElementById('fTitle')?.focus(), 100);
+  }
+
+  /** закрить модальне вікно */
+  function closeModal() {
+    document.getElementById('recipeModal').classList.remove('open');
+    document.body.style.overflow = '';
+    clearErrors();
+  }
+
+  /** заповнити форму даними існуючого рецепту */
+  function populateForm(recipe) {
+    resetForm();
+
+    document.getElementById('fTitle').value = recipe.title || '';
+    document.getElementById('fDescription').value = recipe.description || '';
+    document.getElementById('fImage').value = recipe.image || '';
+    document.getElementById('fCategory').value = recipe.category || '';
+    document.getElementById('fTime').value = recipe.time || '';
+
+    // зображення
+    updateImagePreview(recipe.image);
+
+    // складність
+    setDifficulty(recipe.difficulty || 0);
+
+    // інгредієнти
+    (recipe.ingredients || []).forEach(ing => addIngredientField(ing));
+    if (!recipe.ingredients || recipe.ingredients.length === 0) {
+      addIngredientField();
+    }
+
+    // кроки
+    (recipe.steps || []).forEach(step => addStepField(step));
+    if (!recipe.steps || recipe.steps.length === 0) {
+      addStepField();
+    }
+  }
+
+  /** скинути форму до початкового стану */
+  function resetForm() {
+    document.getElementById('recipeForm').reset();
+    document.getElementById('ingredientsList').innerHTML = '';
+    document.getElementById('stepsList').innerHTML = '';
+    document.getElementById('imagePreview').classList.remove('loaded');
+    document.getElementById('imagePreview').src = '';
+    document.getElementById('difficultyLabel').textContent = '';
+    currentDifficulty = 0;
+    updateStarButtons(0);
+    updateCounts();
+    clearErrors();
+  }
+
+  /** очистити всі помилки форми */
+  function clearErrors() {
+    document.querySelectorAll('.form-error').forEach(el => el.classList.add('hidden'));
+  }
+
+  // ====================================
+  //  тут блок зі складністю (зірки от 1 до 5)
+  // ====================================
+
+  /** встановити значення складності */
+  function setDifficulty(value) {
+    currentDifficulty = value;
+    updateStarButtons(value);
+    document.getElementById('difficultyLabel').textContent = DIFFICULTY_LABELS[value] || '';
+    document.getElementById('errDifficulty').classList.add('hidden');
+  }
+
+  /** оновити вигляд зірок у формі */
+  function updateStarButtons(value) {
+    document.querySelectorAll('.star-btn').forEach(btn => {
+      const btnVal = parseInt(btn.dataset.value);
+      btn.classList.toggle('selected', btnVal <= value);
+    });
+  }
+
+  // додав ефект наведення на зірки
+  document.querySelectorAll('.star-btn').forEach(btn => {
+    btn.addEventListener('mouseenter', () => {
+      const hoverVal = parseInt(btn.dataset.value);
+      document.querySelectorAll('.star-btn').forEach(b => {
+        b.classList.toggle('selected', parseInt(b.dataset.value) <= hoverVal);
+      });
+    });
+    btn.addEventListener('mouseleave', () => {
+      updateStarButtons(currentDifficulty);
+    });
+  });
+
+  // ====================================
+  //  динамічні списки (інгредієнти / кроки)
+  // ====================================
+
+  /** додати поле для інгредієнта */
+  function addIngredientField(value = '') {
+    const list = document.getElementById('ingredientsList');
+    const item = document.createElement('div');
+    item.className = 'dynamic-list-item';
+    item.innerHTML = `
+      <input
+        type="text"
+        class="form-input ingredient-input"
+        placeholder="Наприклад: Борошно — 200 г"
+        value="${escapeHtml(value)}"
+        maxlength="150"
+        oninput="updateCounts()"
+      />
+      <button type="button" class="btn-remove-item" onclick="removeListItem(this)" title="Видалити">✕</button>
+    `;
+    list.appendChild(item);
+    updateCounts();
+    item.querySelector('input').focus();
+  }
+
+  /** додати поле для кроку приготування */
+  function addStepField(value = '') {
+    const list = document.getElementById('stepsList');
+    const stepNum = list.children.length + 1;
+    const item = document.createElement('div');
+    item.className = 'dynamic-list-item';
+    item.style.alignItems = 'flex-start';
+    item.innerHTML = `
+      <div class="step-number" style="width:28px; height:28px; font-size:0.8rem; flex-shrink:0; margin-top:10px">${stepNum}</div>
+      <textarea
+        class="form-textarea step-input"
+        placeholder="Опишіть крок ${stepNum} приготування..."
+        rows="2"
+        style="min-height:70px"
+        maxlength="500"
+        oninput="updateCounts()"
+      >${escapeHtml(value)}</textarea>
+      <button type="button" class="btn-remove-item" onclick="removeListItem(this, true)" title="Видалити" style="margin-top:10px">✕</button>
+    `;
+    list.appendChild(item);
+    updateCounts();
+    renumberSteps();
+    item.querySelector('textarea').focus();
+  }
+
+  /** видалити поле зі списку */
+  function removeListItem(btn, isStep = false) {
+    btn.parentElement.remove();
+    updateCounts();
+    if (isStep) renumberSteps();
+  }
+
+  function renumberSteps() {
+    document.querySelectorAll('#stepsList .dynamic-list-item').forEach((item, i) => {
+      const numEl = item.querySelector('.step-number');
+      if (numEl) numEl.textContent = i + 1;
+      const textarea = item.querySelector('textarea');
+      if (textarea) textarea.placeholder = `Опишіть крок ${i + 1} приготування...`;
+    });
+  }
+
+  function updateCounts() {
+    const ingCount = document.querySelectorAll('#ingredientsList .ingredient-input').length;
+    const stepsCount = document.querySelectorAll('#stepsList .step-input').length;
+    document.getElementById('ingCount').textContent = ingCount;
+    document.getElementById('stepsCount').textContent = stepsCount;
+  }
+
+  // ====================================
+  //  блок по перегляду зображення
+  // ====================================
+
+  /** додаємо функцію, шоб оновлювати попередній перегляд зображення по посиланню */
+  function updateImagePreview(url) {
+    const preview = document.getElementById('imagePreview');
+    if (!url) {
+      preview.classList.remove('loaded');
+      return;
+    }
+    preview.onload  = () => preview.classList.add('loaded');
+    preview.onerror = () => preview.classList.remove('loaded');
+    preview.src = url;
+  }
+
+  // слухач для поля URL зображення
+  document.getElementById('fImage').addEventListener('input', function() {
+    updateImagePreview(this.value);
+  });
+
+  // ====================================
+  //  збереження рецептів
+  // ====================================
+
+  /** збираємо дані форми і зберігаємо рецепт */
+  function saveRecipe() {
+    clearErrors();
+    let isValid = true;
+
+    // валідація полів
+    const title = document.getElementById('fTitle').value.trim();
+    const description = document.getElementById('fDescription').value.trim();
+    const image = document.getElementById('fImage').value.trim();
+    const category = document.getElementById('fCategory').value;
+    const time = parseInt(document.getElementById('fTime').value);
+
+    if (!title) {
+      document.getElementById('errTitle').classList.remove('hidden');
+      isValid = false;
+    }
+    if (!description) {
+      document.getElementById('errDescription').classList.remove('hidden');
+      isValid = false;
+    }
+    if (!category) {
+      document.getElementById('errCategory').classList.remove('hidden');
+      isValid = false;
+    }
+    if (!time || time < 1) {
+      document.getElementById('errTime').classList.remove('hidden');
+      isValid = false;
+    }
+    if (currentDifficulty === 0) {
+      document.getElementById('errDifficulty').classList.remove('hidden');
+      isValid = false;
+    }
+
+    if (!isValid) {
+      showToast('❌ Будь ласка, заповніть всі обов\'язкові поля', 'error');
+      return;
+    }
+
+    // збираємо інгредієнти фільтруємо пусті
+    const ingredients = Array.from(document.querySelectorAll('.ingredient-input'))
+      .map(i => i.value.trim())
+      .filter(Boolean);
+
+    // збираємо кроки фільтруємо пусті :)
+    const steps = Array.from(document.querySelectorAll('.step-input'))
+      .map(t => t.value.trim())
+      .filter(Boolean);
+
+    const recipeData = {
+      title,
+      description,
+      image: image || 'https://images.unsplash.com/photo-1495521821757-a1efb6729352?w=800&fit=crop',
+      category,
+      difficulty: currentDifficulty,
+      time,
+      ingredients,
+      steps
+    };
+
+    if (editingId) {
+      // оновлення існуючого рецепту
+      updateRecipe(editingId, recipeData);
+      showToast('✅ Рецепт успішно оновлено!', 'success');
+    } else {
+      // додавання нового рецепту
+      addRecipe(recipeData);
+      showToast('✅ Новий рецепт додано!', 'success');
+    }
+
+    closeModal();
+    renderStats();
+    renderAdminTable();
+  }
+
+  // ====================================
+  //  редагування рецепта
+  // ====================================
+
+  function startEdit(id) {
+    openModal(id);
+  }
+
+  // ====================================
+  //  видалення рецепта
+  // ====================================
+
+  /** відкрити діалог підтвердження видалення */
+  function startDelete(id, title) {
+    pendingDeleteId = id;
+    document.getElementById('confirmText').textContent =
+      `Ви збираєтесь видалити рецепт "${title}". Ця дія незворотна!`;
+    document.getElementById('confirmDialog').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  /** закрити діалог */
+  function closeConfirm() {
+    pendingDeleteId = null;
+    document.getElementById('confirmDialog').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  /** апрувнуть видалення */
+  function confirmDelete() {
+    if (!pendingDeleteId) return;
+    deleteRecipe(pendingDeleteId);
+    showToast('🗑️ Рецепт видалено', 'info');
+    closeConfirm();
+    renderStats();
+    renderAdminTable();
+  }
+
+  // ====================================
+  //  клавіатурна навігація
+  // ====================================
+
+  // закриваємо модальні вікна кнопочкой ескейп
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeModal();
+      closeConfirm();
+    }
+  });
+
+  // закриваємо вікна кліком на оверлей
+  document.getElementById('recipeModal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+
+  document.getElementById('confirmDialog').addEventListener('click', function(e) {
+    if (e.target === this) closeConfirm();
+  });
+
+  // ====================================
+  //  ініціалізація
+  // ====================================
+  document.addEventListener('DOMContentLoaded', () => {
+    checkAuth();
+  });
+</script>
+
+</body>
+</html>

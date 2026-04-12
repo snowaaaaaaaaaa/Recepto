@@ -1,0 +1,1437 @@
+
+
+/* класний шріфт гугл фонтс --- */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Nunito:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  /* тут закинув більш пастельні кольори */
+  --cream:          #FFF8F2;
+  --cream-dark:     #F5EDE0;
+  --cream-border:   #EDD8C5;
+  --terracotta:     #C8552A;
+  --terracotta-lt:  #E07050;
+  --terracotta-dk:  #A03E1C;
+  --peach:          #F2A878;
+  --gold:           #D4862A;
+  --sage:           #5A7A3C;
+  --sage-light:     #78A055;
+  --brown-dark:     #2C1810;
+  --brown-mid:      #6B3A28;
+  --brown-light:    #9B6248;
+  --text-muted:     #B8907A;
+  --white:          #FFFFFF;
+  --shadow-color:   rgba(44, 24, 16, 0.1);
+  --overlay:        rgba(44, 24, 16, 0.5);
+
+  /* додав трохи тіней, щоб згладити кольори */
+  --shadow-xs: 0 1px 4px rgba(44,24,16,0.06);
+  --shadow-sm: 0 2px 10px rgba(44,24,16,0.09);
+  --shadow-md: 0 6px 24px rgba(44,24,16,0.13);
+  --shadow-lg: 0 12px 48px rgba(44,24,16,0.18);
+  --shadow-xl: 0 20px 72px rgba(44,24,16,0.22);
+
+  /* радіуси для пропорцій */
+  --r-xs:  6px;
+  --r-sm:  10px;
+  --r-md:  16px;
+  --r-lg:  24px;
+  --r-xl:  36px;
+  --r-full: 9999px;
+
+  /* ще шрифти */
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body:    'Nunito', 'Segoe UI', sans-serif;
+
+  /* смуз переходи */
+  --ease:    cubic-bezier(0.4, 0, 0.2, 1);
+  --trans:   all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --trans-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--cream);
+  color: var(--brown-dark);
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+button, input, textarea, select {
+  font-family: var(--font-body);
+  outline: none;
+  border: none;
+}
+
+/* типографіка */
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--brown-dark);
+}
+
+h1 { font-size: clamp(1.8rem, 4vw, 3rem); }
+h2 { font-size: clamp(1.4rem, 3vw, 2.2rem); }
+h3 { font-size: clamp(1.1rem, 2vw, 1.5rem); }
+h4 { font-size: 1.1rem; }
+
+p { color: var(--brown-mid); line-height: 1.7; }
+
+/* утілітки */
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+/* хед і навігація */
+.site-header {
+  background: var(--white);
+  border-bottom: 2px solid var(--cream-border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-sm);
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 72px;
+  gap: 20px;
+}
+
+/* логотипчик */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.logo-icon {
+  width: 42px;
+  height: 42px;
+  background: linear-gradient(135deg, var(--terracotta), var(--gold));
+  border-radius: var(--r-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  box-shadow: var(--shadow-sm);
+  transition: var(--trans);
+}
+
+.logo:hover .logo-icon {
+  transform: rotate(-5deg) scale(1.05);
+}
+
+.logo-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.logo-name {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--brown-dark);
+}
+
+.logo-sub {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* навігація */
+.site-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-link {
+  padding: 8px 16px;
+  border-radius: var(--r-full);
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--brown-mid);
+  transition: var(--trans);
+  white-space: nowrap;
+}
+
+.nav-link:hover {
+  background: var(--cream-dark);
+  color: var(--terracotta);
+}
+
+.nav-link.active {
+  background: var(--cream-dark);
+  color: var(--terracotta);
+}
+
+.nav-link.btn-admin {
+  background: linear-gradient(135deg, var(--terracotta), var(--terracotta-lt));
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.nav-link.btn-admin:hover {
+  background: linear-gradient(135deg, var(--terracotta-dk), var(--terracotta));
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* бугрер для мобільних */
+.burger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  padding: 6px;
+  background: none;
+  border: none;
+}
+
+.burger span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--brown-mid);
+  border-radius: 2px;
+  transition: var(--trans);
+}
+
+/* заголовок */
+.page-hero {
+  background: linear-gradient(135deg, var(--brown-dark) 0%, var(--brown-mid) 50%, var(--terracotta-dk) 100%);
+  padding: 60px 20px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.page-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+.page-hero .container { position: relative; }
+
+.page-hero h1 {
+  color: var(--white);
+  margin-bottom: 12px;
+}
+
+.page-hero p {
+  color: rgba(255,255,255,0.75);
+  font-size: 1.05rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* тут стиль для пошука і фільтров */
+.search-filter-bar {
+  background: var(--white);
+  border-bottom: 1px solid var(--cream-border);
+  padding: 20px 0;
+  position: sticky;
+  top: 72px;
+  z-index: 90;
+  box-shadow: var(--shadow-xs);
+}
+
+.search-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.search-input-wrap {
+  flex: 1;
+  position: relative;
+}
+
+.search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: 1rem;
+  pointer-events: none;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 14px 12px 42px;
+  border: 2px solid var(--cream-border);
+  border-radius: var(--r-full);
+  background: var(--cream);
+  font-size: 0.95rem;
+  color: var(--brown-dark);
+  transition: var(--trans);
+}
+
+.search-input:focus {
+  border-color: var(--terracotta);
+  background: var(--white);
+  box-shadow: 0 0 0 3px rgba(200,85,42,0.1);
+}
+
+.search-input::placeholder { color: var(--text-muted); }
+
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.filter-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.filter-select {
+  padding: 8px 32px 8px 14px;
+  border: 2px solid var(--cream-border);
+  border-radius: var(--r-full);
+  background: var(--cream);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--brown-mid);
+  cursor: pointer;
+  transition: var(--trans);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%238B5E52' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+}
+
+.filter-select:focus {
+  border-color: var(--terracotta);
+  background-color: var(--white);
+}
+
+.btn-reset-filters {
+  padding: 8px 16px;
+  border-radius: var(--r-full);
+  border: 2px solid var(--cream-border);
+  background: transparent;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: var(--trans);
+  white-space: nowrap;
+}
+
+.btn-reset-filters:hover {
+  border-color: var(--terracotta);
+  color: var(--terracotta);
+  background: rgba(200,85,42,0.05);
+}
+
+.results-count {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-left: auto;
+}
+
+/* сітка рецептів, для коректного відображення */
+.recipes-section {
+  padding: 40px 0 60px;
+}
+
+.recipes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 28px;
+}
+
+/* карточка рецептів */
+.recipe-card {
+  background: var(--white);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: var(--trans);
+  cursor: pointer;
+  position: relative;
+  border: 1px solid var(--cream-border);
+}
+
+.recipe-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--peach);
+}
+
+.card-image-wrap {
+  position: relative;
+  overflow: hidden;
+  height: 220px;
+}
+
+.card-image-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s var(--ease);
+}
+
+.recipe-card:hover .card-image-wrap img {
+  transform: scale(1.07);
+}
+
+.card-category {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: var(--white);
+  color: var(--terracotta);
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: var(--r-full);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  box-shadow: var(--shadow-sm);
+}
+
+.card-time-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(44,24,16,0.75);
+  color: var(--white);
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 5px 10px;
+  border-radius: var(--r-full);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  backdrop-filter: blur(4px);
+}
+
+.card-body {
+  padding: 20px;
+}
+
+.card-title {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--brown-dark);
+  margin-bottom: 8px;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-desc {
+  font-size: 0.88rem;
+  color: var(--brown-light);
+  line-height: 1.5;
+  margin-bottom: 16px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 14px;
+  border-top: 1px solid var(--cream-border);
+}
+
+.stars {
+  display: flex;
+  gap: 2px;
+}
+
+.star {
+  font-size: 0.9rem;
+  color: var(--cream-border);
+  transition: var(--trans-fast);
+}
+
+.star.filled {
+  color: var(--gold);
+}
+
+.card-time-text {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* пуста сітка, щоб не з'їжджали рецепти */
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.empty-state .empty-icon {
+  font-size: 4rem;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.empty-state h3 {
+  margin-bottom: 8px;
+  color: var(--brown-mid);
+}
+
+.empty-state p {
+  font-size: 0.95rem;
+}
+
+/* пейдж рецепта */
+.recipe-detail-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 20px 80px;
+}
+
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: var(--r-full);
+  background: var(--white);
+  border: 2px solid var(--cream-border);
+  color: var(--brown-mid);
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: var(--trans);
+  margin-bottom: 32px;
+}
+
+.btn-back:hover {
+  border-color: var(--terracotta);
+  color: var(--terracotta);
+  transform: translateX(-3px);
+}
+
+.recipe-hero-image {
+  width: 100%;
+  height: 420px;
+  object-fit: cover;
+  border-radius: var(--r-xl);
+  box-shadow: var(--shadow-lg);
+  margin-bottom: 36px;
+}
+
+.recipe-detail-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.meta-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: var(--r-full);
+  background: var(--white);
+  border: 2px solid var(--cream-border);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--brown-mid);
+  box-shadow: var(--shadow-xs);
+}
+
+.meta-badge.category { color: var(--terracotta); border-color: rgba(200,85,42,0.3); background: rgba(200,85,42,0.05); }
+.meta-badge.time     { color: var(--sage); border-color: rgba(90,122,60,0.3); background: rgba(90,122,60,0.05); }
+
+.recipe-detail-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 700;
+  color: var(--brown-dark);
+  line-height: 1.2;
+  margin-bottom: 16px;
+}
+
+.recipe-detail-desc {
+  font-size: 1.1rem;
+  color: var(--brown-mid);
+  line-height: 1.7;
+  margin-bottom: 40px;
+  padding-bottom: 40px;
+  border-bottom: 2px solid var(--cream-border);
+}
+
+.recipe-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+}
+
+@media (max-width: 640px) {
+  .recipe-content { grid-template-columns: 1fr; }
+}
+
+.recipe-section-title {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--brown-dark);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.recipe-section-title::after {
+  content: '';
+  flex: 1;
+  height: 2px;
+  background: linear-gradient(to right, var(--cream-border), transparent);
+}
+
+/* списочок інгредієнтів */
+.ingredients-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ingredient-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--white);
+  border-radius: var(--r-md);
+  border: 1px solid var(--cream-border);
+  font-size: 0.95rem;
+  color: var(--brown-mid);
+  transition: var(--trans-fast);
+}
+
+.ingredient-item:hover {
+  border-color: var(--peach);
+  background: rgba(242,168,120,0.05);
+}
+
+.ingredient-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--terracotta), var(--peach));
+  flex-shrink: 0;
+}
+
+/* покроково рецепт */  
+.steps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.step-item {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  background: var(--white);
+  border-radius: var(--r-md);
+  border: 1px solid var(--cream-border);
+  transition: var(--trans-fast);
+}
+
+.step-item:hover {
+  border-color: var(--peach);
+  box-shadow: var(--shadow-xs);
+}
+
+.step-number {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--terracotta), var(--terracotta-lt));
+  color: var(--white);
+  font-weight: 800;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.step-text {
+  font-size: 0.95rem;
+  color: var(--brown-mid);
+  line-height: 1.6;
+  padding-top: 4px;
+}
+
+/* зробимо більш гарну адмін панель */
+.admin-page {
+  min-height: 100vh;
+  background: var(--cream);
+}
+
+/* вхід в адмінку */
+.admin-login-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 72px);
+  padding: 40px 20px;
+}
+
+.admin-login-card {
+  background: var(--white);
+  border-radius: var(--r-xl);
+  padding: 48px 40px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--cream-border);
+  text-align: center;
+}
+
+.admin-login-icon {
+  font-size: 3rem;
+  margin-bottom: 20px;
+}
+
+.admin-login-card h2 {
+  margin-bottom: 8px;
+}
+
+.admin-login-card p {
+  margin-bottom: 28px;
+  font-size: 0.95rem;
+}
+
+/* дашборд адмінки */
+.admin-dashboard {
+  padding: 40px 0 80px;
+}
+
+.admin-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.admin-header-bar h2 {
+  font-size: 1.6rem;
+}
+
+/* таблиця рецептів */
+.admin-table-wrap {
+  background: var(--white);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--cream-border);
+  overflow: hidden;
+  margin-bottom: 32px;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-table thead {
+  background: linear-gradient(135deg, var(--brown-dark), var(--brown-mid));
+}
+
+.admin-table th {
+  padding: 16px 20px;
+  text-align: left;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(255,255,255,0.8);
+  white-space: nowrap;
+}
+
+.admin-table tbody tr {
+  border-bottom: 1px solid var(--cream-border);
+  transition: var(--trans-fast);
+}
+
+.admin-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.admin-table tbody tr:hover {
+  background: var(--cream);
+}
+
+.admin-table td {
+  padding: 14px 20px;
+  font-size: 0.9rem;
+  color: var(--brown-mid);
+  vertical-align: middle;
+}
+
+.admin-table td:first-child {
+  font-weight: 700;
+  color: var(--brown-dark);
+}
+
+.admin-thumb {
+  width: 56px;
+  height: 42px;
+  object-fit: cover;
+  border-radius: var(--r-sm);
+}
+
+.admin-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* блок з кнопками */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: var(--r-full);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--trans);
+  border: 2px solid transparent;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--terracotta), var(--terracotta-lt));
+  color: var(--white);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, var(--terracotta-dk), var(--terracotta));
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background: var(--white);
+  color: var(--terracotta);
+  border-color: var(--terracotta);
+}
+
+.btn-secondary:hover {
+  background: rgba(200,85,42,0.06);
+  transform: translateY(-1px);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, var(--sage), var(--sage-light));
+  color: var(--white);
+}
+
+.btn-success:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.btn-danger {
+  background: #e74c3c;
+  color: var(--white);
+  border: none;
+}
+
+.btn-danger:hover {
+  background: #c0392b;
+  transform: translateY(-1px);
+}
+
+.btn-sm {
+  padding: 7px 14px;
+  font-size: 0.82rem;
+}
+
+.btn-warning {
+  background: #f39c12;
+  color: white;
+  border: none;
+}
+
+.btn-warning:hover {
+  background: #d68910;
+  transform: translateY(-1px);
+}
+
+/* форми */
+.form-group {
+  margin-bottom: 22px;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--brown-mid);
+  margin-bottom: 8px;
+  letter-spacing: 0.02em;
+}
+
+.form-input,
+.form-textarea,
+.form-select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid var(--cream-border);
+  border-radius: var(--r-md);
+  background: var(--cream);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--brown-dark);
+  transition: var(--trans);
+}
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+  border-color: var(--terracotta);
+  background: var(--white);
+  box-shadow: 0 0 0 4px rgba(200,85,42,0.08);
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: var(--text-muted);
+}
+
+.form-textarea {
+  min-height: 100px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 480px) {
+  .form-row { grid-template-columns: 1fr; }
+}
+
+/* рейтинг зірок у формі */
+.stars-input {
+  display: flex;
+  gap: 6px;
+}
+
+.star-btn {
+  font-size: 1.5rem;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: var(--cream-border);
+  transition: var(--trans-fast);
+  padding: 2px;
+  line-height: 1;
+}
+
+.star-btn.selected,
+.star-btn:hover {
+  color: var(--gold);
+  transform: scale(1.15);
+}
+
+/* поле для списку інгредієнти/кроки */
+.dynamic-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dynamic-list-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dynamic-list-item input,
+.dynamic-list-item textarea {
+  flex: 1;
+}
+
+.btn-remove-item {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(231,76,60,0.1);
+  color: #e74c3c;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: var(--trans-fast);
+}
+
+.btn-remove-item:hover {
+  background: #e74c3c;
+  color: white;
+}
+
+.btn-add-item {
+  align-self: flex-start;
+  padding: 8px 16px;
+  border-radius: var(--r-full);
+  background: rgba(90,122,60,0.1);
+  color: var(--sage);
+  border: 2px solid rgba(90,122,60,0.3);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--trans-fast);
+  margin-top: 4px;
+}
+
+.btn-add-item:hover {
+  background: var(--sage);
+  color: white;
+  border-color: var(--sage);
+}
+
+/* Помилка форми */
+.form-error {
+  color: #e74c3c;
+  font-size: 0.82rem;
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* модальне вікно */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--overlay);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 20px;
+  overflow-y: auto;
+  opacity: 0;
+  visibility: hidden;
+  transition: var(--trans);
+}
+
+.modal-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal {
+  background: var(--white);
+  border-radius: var(--r-xl);
+  width: 100%;
+  max-width: 700px;
+  box-shadow: var(--shadow-xl);
+  transform: translateY(-20px) scale(0.97);
+  transition: var(--trans);
+  margin: auto;
+}
+
+.modal-overlay.open .modal {
+  transform: translateY(0) scale(1);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 28px;
+  border-bottom: 2px solid var(--cream-border);
+}
+
+.modal-header h3 {
+  font-size: 1.3rem;
+}
+
+.modal-close {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--cream-dark);
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  color: var(--brown-mid);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--trans-fast);
+  flex-shrink: 0;
+}
+
+.modal-close:hover {
+  background: #e74c3c;
+  color: white;
+}
+
+.modal-body {
+  padding: 28px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.modal-footer {
+  padding: 20px 28px;
+  border-top: 2px solid var(--cream-border);
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+/* тоаст повідомлення */
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.toast {
+  padding: 14px 20px;
+  border-radius: var(--r-md);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: white;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: toastIn 0.4s var(--ease) forwards;
+  max-width: 320px;
+}
+
+.toast.success { background: var(--sage); }
+.toast.error   { background: #e74c3c; }
+.toast.info    { background: var(--terracotta); }
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes toastOut {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(20px); }
+}
+
+/* футер (не забудь додати якісь пасхалки) */
+.site-footer {
+  background: var(--brown-dark);
+  color: rgba(255,255,255,0.7);
+  padding: 48px 20px 28px;
+  text-align: center;
+}
+
+.footer-logo {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  color: var(--white);
+  margin-bottom: 8px;
+}
+
+.footer-tagline {
+  font-size: 0.9rem;
+  margin-bottom: 24px;
+  color: rgba(255,255,255,0.5);
+}
+
+.footer-nav {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+
+.footer-nav a {
+  color: rgba(255,255,255,0.6);
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: var(--trans-fast);
+}
+
+.footer-nav a:hover { color: var(--peach); }
+
+.footer-divider {
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(to right, var(--terracotta), var(--peach));
+  margin: 0 auto 24px;
+  border-radius: 2px;
+}
+
+.footer-copy {
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.35);
+}
+
+/* анімки на завантаження */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s var(--ease) forwards;
+}
+
+.animate-fade-up {
+  animation: fadeInUp 0.5s var(--ease) both;
+}
+
+/* скелетон карточки */
+.skeleton {
+  background: linear-gradient(90deg, var(--cream-dark) 25%, var(--cream-border) 50%, var(--cream-dark) 75%);
+  background-size: 400px 100%;
+  animation: shimmer 1.2s infinite;
+  border-radius: var(--r-sm);
+}
+
+/* адаптація під мобілку */
+@media (max-width: 1024px) {
+  .recipes-grid {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  /* хедер */
+  .site-nav {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--white);
+    flex-direction: column;
+    padding: 16px 20px 24px;
+    border-bottom: 2px solid var(--cream-border);
+    box-shadow: var(--shadow-md);
+    gap: 4px;
+  }
+
+  .site-nav.open {
+    display: flex;
+    animation: fadeInUp 0.25s var(--ease) both;
+  }
+
+  .site-nav .nav-link {
+    width: 100%;
+    text-align: left;
+    padding: 12px 16px;
+  }
+
+  .burger { display: flex; }
+
+  /* пошук */
+  .search-filter-bar {
+    top: 72px;
+  }
+
+  .filter-row {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 4px;
+  }
+
+  /* рецепти */
+  .recipes-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .card-image-wrap { height: 170px; }
+
+  /* деталь */
+  .recipe-hero-image { height: 260px; }
+  .recipe-content { gap: 28px; }
+
+  /* адмін таблиця */
+  .admin-table { font-size: 0.85rem; }
+  .admin-table th,
+  .admin-table td { padding: 10px 12px; }
+
+  /* форма */
+  .form-row { grid-template-columns: 1fr; }
+
+  /* модальне вікно */
+  .modal-overlay { padding: 10px; }
+  .modal-body { max-height: 60vh; }
+}
+
+@media (max-width: 480px) {
+  .recipes-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .page-hero { padding: 40px 20px; }
+
+  .recipe-detail-meta { flex-direction: column; }
+
+  .admin-header-bar { flex-direction: column; align-items: flex-start; }
+
+  .admin-table thead { display: none; }
+  .admin-table, .admin-table tbody, .admin-table tr, .admin-table td {
+    display: block;
+    width: 100%;
+  }
+  .admin-table tr {
+    background: var(--white);
+    border-radius: var(--r-md);
+    margin-bottom: 12px;
+    padding: 12px;
+    box-shadow: var(--shadow-xs);
+  }
+  .admin-table td {
+    border: none;
+    padding: 4px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .admin-table td::before {
+    content: attr(data-label);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    min-width: 80px;
+  }
+
+  .toast-container {
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+  }
+
+  .toast { max-width: 100%; }
+}
+
+@media print {
+  .site-header,
+  .search-filter-bar,
+  .site-footer,
+  .btn-back { display: none; }
+
+  .recipe-detail-page { padding: 0; }
+  .recipe-hero-image { height: 300px; }
+}
+
+/* відображення (проверь еще раз) */
+.hidden { display: none !important; }
+.flex    { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.gap-8  { gap: 8px; }
+.gap-12 { gap: 12px; }
+.gap-16 { gap: 16px; }
+.mt-8   { margin-top: 8px; }
+.mt-16  { margin-top: 16px; }
+.mt-24  { margin-top: 24px; }
+.mb-0   { margin-bottom: 0 !important; }
+.text-center { text-align: center; }
+.w-full { width: 100%; }

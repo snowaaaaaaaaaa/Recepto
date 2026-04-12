@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Збірник рецептів — смачні рецепти з усього світу з покроковими інструкціями" />
+  <title>Recepto</title>
+  <link rel="stylesheet" href="styles.css" />
+  <!-- favicon емодзі, треба перевірити розмір -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍳</text></svg>" />
+</head>
+<body>
+
+<!-- хед -->
+<header class="site-header">
+  <div class="container header-inner">
+
+    <!-- логотипчик -->
+    <a href="index.html" class="logo" aria-label="На головну">
+      <div class="logo-icon">🍳</div>
+      <div class="logo-text">
+        <span class="logo-name">Recepto</span>
+        <span class="logo-sub">Збірник рецептів</span>
+      </div>
+    </a>
+
+    <!-- навігація -->
+    <nav class="site-nav" id="siteNav" aria-label="Головне меню">
+      <a href="index.html" class="nav-link active">🏠 Рецепти</a>
+      <a href="admin.html" class="nav-link btn-admin">⚙️ Адмін</a>
+    </nav>
+
+    <!-- бургер-кнопка для мобілок -->
+    <button class="burger" id="burgerBtn" aria-label="Відкрити меню" aria-expanded="false">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+  </div>
+</header>
+
+<!-- хіро розділ -->
+<section class="page-hero">
+  <div class="container">
+    <h1>🍽️ Збірник рецептів</h1>
+    <p>Знайдіть ідеальне блюдо для будь-якого випадку — від швидкого сніданку до святкового обіду</p>
+  </div>
+</section>
+
+<!-- пошук і фільтри -->
+<div class="search-filter-bar" id="searchFilterBar">
+  <div class="container">
+
+    <!-- рядок пошуку -->
+    <div class="search-row">
+      <div class="search-input-wrap">
+        <span class="search-icon" aria-hidden="true">🔍</span>
+        <input
+          type="search"
+          id="searchInput"
+          class="search-input"
+          placeholder="Пошук по назві рецепту..."
+          autocomplete="off"
+          aria-label="Пошук рецептів"
+        />
+      </div>
+      <button class="btn btn-secondary btn-reset-filters" id="resetFiltersBtn" aria-label="Скинути всі фільтри">
+        ✕ Скинути
+      </button>
+    </div>
+
+    <!-- рядок фільтрів -->
+    <div class="filter-row">
+      <span class="filter-label">Фільтри:</span>
+
+      <!-- фільтр категорія -->
+      <select id="filterCategory" class="filter-select" aria-label="Фільтр по категорії">
+        <option value="">🗂️ Всі категорії</option>
+        <option value="Сніданки">🌅 Сніданки</option>
+        <option value="Обіди">☀️ Обіди</option>
+        <option value="Вечері">🌙 Вечері</option>
+        <option value="Десерти">🍰 Десерти</option>
+        <option value="Салати">🥗 Салати</option>
+        <option value="Супи">🍲 Супи</option>
+        <option value="Закуски">🥨 Закуски</option>
+        <option value="Напої">🥤 Напої</option>
+      </select>
+
+      <!-- фільтр складності -->
+      <select id="filterDifficulty" class="filter-select" aria-label="Фільтр по складності">
+        <option value="">⭐ Будь-яка складність</option>
+        <option value="1">★ Дуже просто</option>
+        <option value="2">★★ Легко</option>
+        <option value="3">★★★ Середньо</option>
+        <option value="4">★★★★ Складно</option>
+        <option value="5">★★★★★ Майстер</option>
+      </select>
+
+      <!-- фільтр час приготування -->
+      <select id="filterTime" class="filter-select" aria-label="Фільтр по часу приготування">
+        <option value="">⏱ Будь-який час</option>
+        <option value="15">до 15 хв</option>
+        <option value="30">до 30 хв</option>
+        <option value="60">до 1 год</option>
+        <option value="90">до 1,5 год</option>
+        <option value="120">до 2 год</option>
+      </select>
+
+      <span class="results-count" id="resultsCount" aria-live="polite"></span>
+    </div>
+
+  </div>
+</div>
+
+<!-- сітка рецептів (перевірити на мобілі) -->
+<main>
+  <section class="recipes-section">
+    <div class="container">
+      <div class="recipes-grid" id="recipesGrid" role="list" aria-label="Список рецептів">
+        <!-- тут додав рендер через жаву -->
+        <div class="empty-state" id="loadingState">
+          <div class="empty-icon">⏳</div>
+          <h3>Завантаження рецептів...</h3>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- футер -->
+<footer class="site-footer">
+  <div class="footer-logo">🍳 Recepto</div>
+  <p class="footer-tagline">Кожне блюдо — це маленька подія</p>
+  <div class="footer-divider"></div>
+  <nav class="footer-nav" aria-label="Навігація у футері">
+    <a href="index.html">Рецепти</a>
+    <a href="admin.html">Адмін</a>
+  </nav>
+  <p class="footer-copy">© 2026 Dvorovenko. Готуйте з любов'ю! ❤️</p>
+</footer>
+
+<!-- підключаємо жаву -->
+<script src="script.js"></script>
+<script>
+
+  /* далі буде вся логіка сторінки, тут поточний стан фільтрів */
+  const filters = {
+    search: '',
+    category: '',
+    difficulty: '',
+    time: ''
+  };
+
+  /**
+   * рендер сітки рецептів
+   * він фільтрує рецепти за поточними фільтрами і оновлює dom
+   */
+  function renderGrid() {
+    const grid = document.getElementById('recipesGrid');
+    const countEl = document.getElementById('resultsCount');
+
+    // спроба отримати всі рецепти
+    let recipes = getRecipes();
+
+    // фільтрація по пошуку, але не включая регістр, щоб не було заморочки
+    if (filters.search.trim()) {
+      const q = filters.search.toLowerCase();
+      recipes = recipes.filter(r =>
+        r.title.toLowerCase().includes(q) ||
+        r.description.toLowerCase().includes(q) ||
+        r.category.toLowerCase().includes(q)
+      );
+    }
+
+    // фільтрація по категорії
+    if (filters.category) {
+      recipes = recipes.filter(r => r.category === filters.category);
+    }
+
+    // фільтрація по складності
+    if (filters.difficulty) {
+      recipes = recipes.filter(r => r.difficulty === parseInt(filters.difficulty));
+    }
+
+    // фільтрація по часу
+    if (filters.time) {
+      recipes = recipes.filter(r => r.time <= parseInt(filters.time));
+    }
+
+    // оновлення лічильника
+    countEl.textContent = recipes.length > 0
+      ? `Знайдено: ${recipes.length} рецепт${pluralUk(recipes.length)}`
+      : '';
+
+    // рендер карток або пустого стану
+    if (recipes.length === 0) {
+      grid.innerHTML = `
+        <div class="empty-state animate-fade-in">
+          <div class="empty-icon">🔍</div>
+          <h3>Рецептів не знайдено</h3>
+          <p>Спробуйте змінити умови пошуку або <button class="btn btn-secondary btn-sm mt-8" onclick="resetFilters()">скинути фільтри</button></p>
+        </div>
+      `;
+    } else {
+      // рендеримо картки з затримкою для норм анімації
+      grid.innerHTML = recipes.map((r, i) => {
+        const card = renderRecipeCard(r);
+        // додаємо затримку для кожної картки, шоб був норм ефект появи (нужно затестить разное время)
+        return card.replace(
+          'class="recipe-card animate-fade-up"',
+          `class="recipe-card animate-fade-up" style="animation-delay:${i * 60}ms"`
+        );
+      }).join('');
+    }
+  }
+
+  function pluralUk(n) {
+    const mod10  = n % 10;
+    const mod100 = n % 100;
+    if (mod10 === 1 && mod100 !== 11) return '';
+    if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) return 'и';
+    return 'ів';
+  }
+
+  /** cброс всіх фільтрів */
+  function resetFilters() {
+    filters.search = '';
+    filters.category = '';
+    filters.difficulty = '';
+    filters.time = '';
+
+    document.getElementById('searchInput').value = '';
+    document.getElementById('filterCategory').value = '';
+    document.getElementById('filterDifficulty').value = '';
+    document.getElementById('filterTime').value = '';
+
+    renderGrid();
+  }
+
+  // миттєве оновлення при пошуку
+  document.getElementById('searchInput').addEventListener('input', (e) => {
+    filters.search = e.target.value;
+    renderGrid();
+  });
+
+  // фільтр категорії
+  document.getElementById('filterCategory').addEventListener('change', (e) => {
+    filters.category = e.target.value;
+    renderGrid();
+  });
+
+  // фільтр складності
+  document.getElementById('filterDifficulty').addEventListener('change', (e) => {
+    filters.difficulty = e.target.value;
+    renderGrid();
+  });
+
+  // фільтр часу
+  document.getElementById('filterTime').addEventListener('change', (e) => {
+    filters.time = e.target.value;
+    renderGrid();
+  });
+
+  // кнопка скидання фільтрів
+  document.getElementById('resetFiltersBtn').addEventListener('click', resetFilters);
+
+  // рендер одразу після завантаження dom
+  document.addEventListener('DOMContentLoaded', () => {
+    renderGrid();
+  });
+</script>
+
+</body>
+</html>
